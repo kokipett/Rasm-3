@@ -1,0 +1,92 @@
+.global String_copy
+
+.data
+word1:	.quad	0	//8 bytes, or 64 bits which can contain a double word (two 32 bits)
+
+.text
+
+//X0 contains address of string
+//X1 contains stringlength
+//X2 contains address of malloced space
+//W8: contains temporary byte
+//X3: index
+//X4 just holds 
+
+String_copy:
+	MOV	X7,X0	
+	MOV	X2,#0
+
+	LOOP1:
+		ADD	X2,X2,#1
+		LDRB	W1,[X7],#1
+		CMP	W1,#0
+		BEQ	Exit
+		B	LOOP1
+
+	Exit:
+		MOV	X4,X2
+		STR	X0,[SP,#-16!]!
+		STR	X4,[SP,#-16!]!
+		STR	X30,[SP,#-16!]!
+
+		MOV	X0,X2
+		BL 	malloc
+
+		LDR	X1,=word1
+		str	x0,[x1]
+
+		ldr	x30,[sp],#16
+		ldr	x4,[sp],#16
+		ldr	x0,[sp],#16
+
+		LDR	X1,=word1
+		LDR	x1,[x1]
+		mov	x3,#0
+
+	LOOP2:
+		LDRB	W2,[X0,X3]
+		STRB	W2,[X1,X3]
+		ADD	X3,X3,#1
+
+		CMP	X3,X4
+		BNE	LOOP2
+
+	MOV	X0,X1
+
+
+
+
+
+
+/*	STR	X30,	[SP, #-16]!	//
+	STR	X0,	[SP, #-16]!	//Push X0 to save it cuz string length is gonna be used
+
+
+	BL	String_length		//x0 now contains size of string parameter
+	MOV	X1,X0			//save # of space into x1
+	BL	malloc			//malloc makes space for string size
+	MOV	X2,X0			//save new address into X2
+
+
+	LDR	X0,	[SP],	#16	//Get address of string param back!
+
+	MOV X3,#0 //initialize index MOV X3,#0 //initialize index
+	MOV	W8,#0
+	MOV	X4,#0			//initialize thing
+
+	Loop:				//Loop over every byte of String, put into X2(malloced space for string)
+		CMP	X3,X1		//Compare index with length
+		BGE	End
+		LDRB	W8,[X0,X3]	//grab a byte from x0 and put into w8, x3 offset
+		STRB	W8,[X4,X3]	//put byte in x2(malloced space)
+		ADD	X3,X3,#1
+		B	Loop
+
+	End:
+		MOV	W8,#0
+		STRB	W8,[X4,X3]
+		MOV	X0,X4
+
+*/
+	RET	LR
+.end
