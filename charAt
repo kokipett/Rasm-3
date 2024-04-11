@@ -1,0 +1,61 @@
+.global charAt
+
+.data
+ch:	.byte 0x00
+
+.text
+
+//x0 address to string
+//x1 position
+//x2 string length
+//x3 counter
+//w8 gets byte temporarily
+
+charAt:
+	STR	X30,[SP,#-16]!
+//	STR	X0,[SP,#-16]!
+	STR	X1,[SP,#-16]!
+
+	mov	W1,#0		//index
+
+
+	ldr	w4,#4
+
+	mov	w2,#0
+
+	LDR	W0,X0
+	mov	w1,#0
+
+	ldr	w11,0
+	LDR	X2,#0
+	LDR	X4,#0
+
+/*	loop:
+		ADD	W2,W0,W4	
+		LDRB	W3,[X2]
+		CMP	W1,W4
+		BEQ	end
+		ADD	W1,W1,#1
+		b	loop
+
+	end:
+		LDR	X0,=ch
+		STRB	W3,[X0]
+
+		LDR	X0,=ch
+		bl	putch
+*/
+	LDR	X1,[SP],#16
+//	LDR	X0,[SP],#16
+	LDR	X30,[SP],#16
+
+	RET	LR
+.end
+
+
+
+
+
+
+
+
